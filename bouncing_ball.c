@@ -13,10 +13,15 @@ const int screen_width = 640;
 const int screen_height = 480;
 const int ball_r = 30;
 const int speed = 5;
-int ball_y, ball_x = 0;
-int dir_y, dir_x = 1;
+int ball_y = 250;
+int ball_x = 250;
+int dir_y = 1;
+int dir_x = 1;
 bool hit_x,hit_y = FALSE;
 S2D_Sound *snd = NULL;
+
+
+
 
 void update() {
     if(ball_x == (screen_width-ball_r)){ //hit right side
@@ -49,8 +54,6 @@ void render() {
 }
 
 int main() {
-    ball_x = ball_r; //set ball start x point
-    ball_y = ball_r; //set ball start y point
     snd = S2D_CreateSound("bounce.wav"); //initialise sound
     S2D_Window *window = S2D_CreateWindow(
         "Hello Triangle", screen_width, screen_height, update, render, 0);//init the window
@@ -58,3 +61,5 @@ int main() {
     S2D_FreeSound(snd); //free sound from mem
   return 0;
 }
+
+
