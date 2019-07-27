@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 //constants to use for ball direction and boolean
 #define LEFT -1
@@ -14,6 +15,11 @@
 const int screen_width = 640;
 const int screen_height = 480;
 
+typedef struct {
+	float x;
+	float y;
+}velocity;
+
 typedef struct { //ball struct template
     int r;
     int speed;
@@ -23,44 +29,45 @@ typedef struct { //ball struct template
     int dir_x;
     bool hit_x;
     bool hit_y;
+    velocity v;
+		int angle;
     S2D_Sound *snd;
 }ball;
 
-ball firstBall[10];
+ball balls[10];
 
 
 void update() {
-    int i;
+		int i;
     for (i = 0; i < 10; i++){
-        if(firstBall[i].x > (screen_width-firstBall[i].r)){ //hit right side
-            firstBall[i].dir_x = LEFT; //bounce back by going left
-            firstBall[i].hit_x = TRUE;
-        }    else if(firstBall[i].x < firstBall[i].r) { //hit left side
-                firstBall[i].dir_x = RIGHT; //bounce back right
-                firstBall[i].hit_x = TRUE;
-                } else {firstBall[i].hit_x = FALSE;}
+        if(balls[i].x > (screen_width-balls[i].r)){ //hit right side
+            balls[i].dir_x = LEFT; //bounce back by going left
+            balls[i].hit_x = TRUE;
+        }    else if(balls[i].x < balls[i].r) { //hit left side
+                balls[i].dir_x = RIGHT; //bounce back right
+                balls[i].hit_x = TRUE;
+                } else {balls[i].hit_x = FALSE;}
 
-        firstBall[i].x = firstBall[i].x + (firstBall[i].speed * firstBall[i].dir_x); //position ball x pos
+        balls[i].x = balls[i].x + (balls[i].speed * balls[i].dir_x); //position ball x pos
+        if(balls[i].y > (screen_height-balls[i].r)){ //hit bottom
+            balls[i].dir_y = UP; //bounce up
+            balls[i].hit_y = TRUE;
+        }    else if(balls[i].y < balls[i].r){ //hit top
+                balls[i].dir_y = DOWN; //bounce down
+                balls[i].hit_y = TRUE;
+                } else {balls[i].hit_y = FALSE;}
 
-        if(firstBall[i].y > (screen_height-firstBall[i].r)){ //hit bottom
-            firstBall[i].dir_y = UP; //bounce up
-            firstBall[i].hit_y = TRUE;
-        }    else if(firstBall[i].y < firstBall[i].r){ //hit top
-                firstBall[i].dir_y = DOWN; //bounce down
-                firstBall[i].hit_y = TRUE;
-                } else {firstBall[i].hit_y = FALSE;}
-
-        firstBall[i].y = firstBall[i].y + (firstBall[i].speed * firstBall[i].dir_y); //position ball y pos
+        balls[i].y += balls[i].speed * balls[i].dir_y; //position ball y pos
     }
 }
 
 void render() {
     int i;
     for (i = 0; i < 10; i++){
-        S2D_DrawCircle(firstBall[i].x, firstBall[i].y, firstBall[i].r, 50, 0, 0, 1, 1);
+        S2D_DrawCircle(balls[i].x, balls[i].y, balls[i].r, 50, 0, 0, 1, 1);
 
-        if(firstBall[i].hit_x||firstBall[i].hit_y){
-            S2D_PlaySound(firstBall[i].snd);//play bounce sound
+        if(balls[i].hit_x||balls[i].hit_y){
+            S2D_PlaySound(balls[i].snd);//play bounce sound
         }
     }
 }
@@ -69,22 +76,20 @@ int main() {
     srand(time(NULL));
     int i;
     for (i = 0; i < 10; i++){
-        firstBall[i].r = rand() % 50;
-        firstBall[i].x = rand() % (screen_width - firstBall[i].r);
-        firstBall[i].y = rand() % (screen_height - firstBall[i].r);
-        firstBall[i].speed = 5;
-        firstBall[i].dir_x = 1;
-        firstBall[i].dir_y = 1;
-        firstBall[i].hit_x = FALSE;
-        firstBall[i].hit_y = FALSE;
-        firstBall[i].snd = S2D_CreateSound("bounce.wav");
+        balls[i].r = rand() % 50;
+        balls[i].x = rand() % (screen_width - balls[i].r);
+        balls[i].y = rand() % (screen_height - balls[i].r);
+        balls[i].speed = 5;
+        balls[i].dir_x = 1;
+        balls[i].dir_y = 1;
+        balls[i].hit_x = FALSE;
+        balls[i].hit_y = FALSE;
+        balls[i].snd = S2D_CreateSound("bounce.wav");
     }
 
     S2D_Window *window = S2D_CreateWindow(
         "Hello Triangle", screen_width, screen_height, update, render, 0);//init the window
     S2D_Show(window);//show the window
-    S2D_FreeSound(firstBall[0].snd); //free sound from mem
+    S2D_FreeSound(balls[0].snd); //free sound from mem
   return 0;
 }
-
-

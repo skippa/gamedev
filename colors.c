@@ -12,9 +12,13 @@ void render() {
 }
 
 void main(){
-    r = ((rand() % 99)+1)/100;
-    g = ((rand() % 99)+1)/100;
-    b = ((rand() % 99)+1)/100;
+    srand(time(NULL));
+    r = (rand() % 99)+1;
+    r = r/100;
+    g = (rand() % 99)+1;
+    g = g/100;
+    b = (rand() % 99)+1;
+    b = b/100;
 	S2D_Window *window = S2D_CreateWindow(
         "Hello Triangle", 640, 480, NULL, render, 0);//init the window
     S2D_Show(window);//show the window
